@@ -1,7 +1,5 @@
 package DFS;
 
-import DFS.AbstractGraph;
-import DFS.UnweightedGraph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,9 +9,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by Zepur on 29.10.2015.
- */
 public class AbstractGraph_TEST<V> {
 
     private String[] vertices = {"Saturn","Tellus","Jupiter","Venus","Neptun","Merkur"};
@@ -53,10 +48,10 @@ public class AbstractGraph_TEST<V> {
 
     @Before
     public void setUp(){
-        connectedCyclicGraph = new UnweightedGraph((V[])vertices, edges);
-        unConnectedGraph = new UnweightedGraph((V[]) vertices, edgesNotAllConnected);
-        connectedNonCyclicGraph = new UnweightedGraph((V[]) vertices, edgesNonCyclic);
-        connectedAlternativeGraph = new UnweightedGraph((V[]) vertices, edgesAlternativeConnections);
+        connectedCyclicGraph = new UnweightedGraph(vertices, edges);
+        unConnectedGraph = new UnweightedGraph(vertices, edgesNotAllConnected);
+        connectedNonCyclicGraph = new UnweightedGraph( vertices, edgesNonCyclic);
+        connectedAlternativeGraph = new UnweightedGraph(vertices, edgesAlternativeConnections);
     }
 
     @Test
@@ -82,18 +77,36 @@ public class AbstractGraph_TEST<V> {
         String[] expectedPath = {"Merkur","Saturn","Venus"};
         List<V> resultPath = connectedCyclicGraph.getPath(5,3);
         for(int i = 0; i < resultPath.size(); i++){
-            assertEquals(expectedPath[(expectedPath.length - 1 - i)], resultPath.get(i));
+            assertEquals(expectedPath[(expectedPath.length-1 - i)], resultPath.get(i));
         }
     }
 
     @Test
-    public void getPath__connectedAlternativeGraph0to5__ExpectSatJupVenMer(){
+    public void getPath__connectedAlternativeGraph0to5CalledWithString__ExpectSatJupVenMer(){
+        String[] expectedPath = {"Saturn", "Jupiter", "Venus", "Merkur"};
+        List<V> resultPath = connectedAlternativeGraph.getPath("Saturn","Merkur");
+        for(int i = 0; i < resultPath.size(); i++){
+            assertEquals(expectedPath[(expectedPath.length-1 - i)], resultPath.get(i));
+        }
+    }
+
+    @Test
+    public void getPath__connectedAlternativeGraph0to5CalledWithInt__ExpectSatJupVenMer(){
         String[] expectedPath = {"Saturn", "Jupiter", "Venus", "Merkur"};
         List<V> resultPath = connectedAlternativeGraph.getPath(0,5);
         for(int i = 0; i < resultPath.size(); i++){
-            System.out.println(i + ": " + resultPath.get(i) + " = " + expectedPath[(expectedPath.length-1 - i)]);
-            assertEquals(expectedPath[(expectedPath.length-1-i)], resultPath.get(i));
+            assertEquals(expectedPath[(expectedPath.length-1 - i)], resultPath.get(i));
         }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getPath__nonExistentStartVertex__ExpectException(){
+        connectedCyclicGraph.getPath(6,0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getPath__nonExistentEndVertex__ExpectException(){
+        connectedCyclicGraph.getPath(0,6);
     }
 
     @Test
@@ -139,36 +152,4 @@ public class AbstractGraph_TEST<V> {
         int result = unConnectedGraph.getDegree(2);
         assertEquals(expected, result);
     }
-
-/*
-
-    @Test
-    public void dfs__dequeStartWith4__ExpectDequeOrder4_1_0_3_2_5(){
-        dequeStartWith4 = connectedCyclicGraph.dfs(4);
-        Integer[] expected = {4, 1, 0, 3, 2, 5};
-        int traversalIndex = 0;
-        while(!dequeStartWith4.isEmpty()){
-            Integer result = dequeStartWith4.pollLast();
-            assertEquals(expected[traversalIndex], result);
-            traversalIndex++;
-        }
-    }
-
-    @Test
-    public void getPath__4to5__Expect4_5(){
-        List<Integer> result= connectedCyclicGraph.getPath(4, 5);
-        Integer expected1 = 4;
-        Integer expected2 = 5;
-        assertEquals(expected1, result.get(0));
-        assertEquals(expected2, result.get(1));
-    }
-
-    @Test
-    public void isCyclic__cyclicInstance__ExpectTRUE(){
-        boolean result = connectedCyclicGraph.isCyclic();
-        assertTrue(result);
-    }
-
-
-    */
 }
